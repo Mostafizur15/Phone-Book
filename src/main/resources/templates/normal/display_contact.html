@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{normal/baseUser::layout(~{::section})}">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<section class="mt-6">
+    <div class="card shadow-sm  mr-2">
+        <div class="card-body mt-3">
+            <div th:classappend="${message.type}" class="alert py-2" role="alert"
+                 th:if="${message != null}">
+                <p class="text-center mb-2" th:text="${message.message}"></p>
+            </div>
+            <div style="text-align: center" th:if="${contact}">
+                <img style="height: 200px; width: 200px; border-radius: 50%" th:src="@{'/images/contact/'+${contact.image}}" alt="No Image Found">
+            </div>
+            <div class="container-fluid mt-1">
+                <div class="row">
+                    <div class="col-md-10 offset-md-1" th:if="${contact}">
+                            <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-plus"></i>
+                                    </span>
+                                <input type="text" class="form-control" readonly th:field="${contact.name}">
+
+                            </div>
+                            <div class="input-group mt-2">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-user-alt"></i>
+                                    </span>
+                                <input type="text" readonly class="form-control" th:field="${contact.secondName}">
+
+                            </div>
+                            <div class="input-group mt-2">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-phone"></i>
+                                    </span>
+                                <input type="text" readonly class="form-control" name="phoneNumber" th:field="${contact.phoneNumber}">
+
+                            </div>
+                            <div class="input-group mt-2">
+                                    <span class="input-group-text">
+                                        @
+                                    </span>
+                                <input type="email" class="form-control" readonly th:field="${contact.email}">
+
+                            </div>
+                            <div class="input-group mt-2">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-briefcase"></i>
+                                    </span>
+                                <input type="text" class="form-control" readonly th:field="${contact.work}">
+
+                            </div>
+                            <div class="form-group mt-3">
+                                <textarea id="textarea" rows="10" class="form-control" readonly
+                                          th:field="${contact.description}"></textarea>
+                            </div>
+                            <div class="container text-center mt-4">
+                                <button type="button" th:onclick="'doDelete(' + ${contact.CId} + ')'" class="btn btn-danger btn-sm">Delete</button>
+                            </div>
+                    </div>
+                    <div class="col-md-10 offset-md-1" th:unless="${contact}">
+                        <h1 class="text-center" style="font-family: 'Roboto', sans-serif; font-size: 30px;">
+                            You dont have permission to show this information!
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.tiny.cloud/1/v6gyaf8bl1zd7av0o218d2run1teiz5yauv46m9zulc4ly0z/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            readOnly: true,
+            selector: 'textarea',
+            plugins: [
+                // Core editing features
+                'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
+                // Your account includes a free trial of TinyMCE premium features
+                // Try the most popular premium features until May 29, 2025:
+                'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'editimage', 'advtemplate', 'ai', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown','importword', 'exportword', 'exportpdf'
+            ],
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+            tinycomments_mode: 'embedded',
+            tinycomments_author: 'Author name',
+            mergetags_list: [
+                { value: 'First.Name', title: 'First Name' },
+                { value: 'Email', title: 'Email' },
+            ],
+            ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+        });
+    </script>
+</section>
+</body>
+</html>

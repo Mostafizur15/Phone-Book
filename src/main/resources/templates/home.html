@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base::layout(~{::section})">
+<head>
+    <meta charset="UTF-8">
+    <title>HOME</title>
+</head>
+<body>
+<section class="banner d-flex justify-content-center align-items-center">
+    <div class="text-center">
+        <h1 class="fw-bold">PHONEBOOK</h1>
+        <p>Welcome to PhoneBook</p>
+        <a th:href="@{/user/index}" class="btn bg-primary btn-lg">Get Start</a>
+    </div>
+</section>
+</body>
+</html>

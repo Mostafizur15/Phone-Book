@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+<head>
+    <meta charset="UTF-8">
+    <title>About</title>
+</head>
+<body>
+<section class="vh-100 d-flex justify-content-center align-items-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card mr-2">
+                    <div class="card-body mt-3 my-5">
+                        <div th:classappend="${message.type}" class="alert py-2" role="alert"
+                             th:if="${message != null}">
+                            <p class="text-center mb-2" th:text="${message.message}"></p>
+                        </div>
+                        <div id="countdown" class="text-center text-danger mb-3" style="font-weight: bold;"></div>
+                        <form th:action="@{/verifyOTP}" th:object="${otpDTO}" method="post">
+                            <h1 class="text-center" style="font-family: 'Roboto', sans-serif; font-size: 30px;">
+                                Verify your OTP
+                            </h1>
+                            <input type="hidden" id="email" th:value="${email}">
+                            <input type="hidden" name="chkOTP" th:value="${otp}">
+                            <div class="form-group mt-5 col-md-7 mx-auto">
+                                <input th:field="*{otp}" type="text"
+                                       class="form-control" size="10%" placeholder="Enter your OTP!"
+                                       th:classappend="${#fields.hasErrors('otp')?'is-invalid':''}">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('otp')}"
+                                     th:errors="*{otp}">
+                                    Old password validation
+                                </div>
+                            </div>
+                            <div class="text-center mt-3">
+                                <button type="submit" id="submitBtn" class="btn btn-success">Verify OTP</button>
+                                <button type="button" id="resendBtn" class="btn btn-primary" th:onclick="resendOTP()" disabled>Resend OTP</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let timer;
+        let countdown = 60;
+
+        function startCountdown() {
+            timer = setInterval(() => {
+                const display = document.getElementById("countdown");
+                const submitBtn = document.getElementById("submitBtn");
+                const resendBtn = document.getElementById("resendBtn");
+
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    display.innerText = "OTP expired. Please request a new one.";
+                    submitBtn.disabled = true;
+                    resendBtn.disabled = false;
+                } else {
+                    display.innerText = "Time left: " + countdown + " seconds";
+                    countdown--;
+                }
+            }, 1000);
+        }
+
+        window.onload = startCountdown;
+        function resendOTP(){
+            const email = document.getElementById("email").value;
+            window.location.href="/resendOTP?email="+encodeURIComponent(email);
+        }
+    </script>
+</section>
+</body>
+</html>

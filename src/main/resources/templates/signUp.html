@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+<head>
+    <meta charset="UTF-8">
+    <title>SignUp</title>
+</head>
+<body>
+<section  class="mt-6">
+    <div class="container mb-5">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="my-card shadow-sm mt-3">
+                    <div th:classappend="${message.type}" class="alert py-2" role="alert"
+                    th:if="${message != null}">
+                        <p class="text-center mb-2" th:text="${message.message}"></p>
+                    </div>
+                    <div class="my-card text-center">
+                        <img alt="No Image Found!!" style= "width: 20%" th:src="@{/images/icons/registration.png}">
+                    </div>
+                    <h1 class="text-center">Register Here!!</h1>
+                    <form novalidate th:action="@{/doRegistration}" method="post" th:object="${user}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control"
+                                   th:classappend="${#fields.hasErrors('name') ? 'is-invalid' : ''}"
+                                   th:field="*{name}" id="name" placeholder="Enter Your Name"
+                            required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+                                Name Validation
+                            </div>
+
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" th:field="*{email}"
+                                   th:classappend="${#fields.hasErrors('email') ? 'is-invalid' : ''}"
+                                   placeholder="Enter Your Email"
+                            required aria-describedby="emailHelp">
+                            <div id="emailHelp" class="form-text"><small>We'll never share your email with anyone else.</small></div>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">
+                                Name Validation
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password"
+                                   th:field="*{password}" placeholder="Enter Your Password"
+                                   th:classappend="${#fields.hasErrors('password')?'is-invalid' : ''}" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
+                                Password Validation
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="verifiedPassword" class="form-label">Verified Password</label>
+                            <input type="password" class="form-control" id="verifiedPassword"
+                                   th:field="*{verifiedPassword}" placeholder="Enter Your Verified Password To Enable Data Transfer Through Email">
+                        </div>
+                        <div class="mb-3">
+                            <textarea th:field="*{about}" id="about" rows="10" class="form-control" placeholder="Enter About Yourself"></textarea>
+                        </div>
+                        <div class="mb-2 form-group">
+                            <label for="agreement" class="form-label">Accept term and condition</label>
+                            <input type="checkbox" class="form-check-input" id="agreement" name="agreement">
+                        </div>
+                        <div class="container">
+                            <button type="submit" class="btn bg-primary text-white">Submit</button>
+                            <button type="reset" class="btn btn-warning text-white">Reset</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

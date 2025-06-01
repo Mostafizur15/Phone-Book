@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{normal/baseUser::layout(~{::section})}">
+<head>
+    <meta charset="UTF-8">
+    <title>About</title>
+</head>
+<body>
+<section>
+    <div class="dash-board card shadow-sm mr-2">
+        <div class="card-body mt-5 my-5">
+            <div style="text-align: center" th:if="${user}">
+                <img style="height: 200px; width: 200px; border-radius: 50%" th:src="@{'/images/contact/contact.jpg'}" alt="No Image Found">
+            </div>
+            <h1 class="text-center" style="font-family: 'Roboto', sans-serif; font-size: 30px;">
+                Start adding your contact....
+            </h1>
+                <div style="display: flex; justify-content: center;">
+                    <a th:href="@{/user/addContact}" class="btn btn-primary mt-4 btn-block text-center">
+                        ADD NEW CONTACT
+                    </a>
+                </div>
+            <footer>
+                Organize your network. Effortlessly categorize and segment your contacts for targeted communication and follow-ups.
+            </footer>
+        </div>
+    </div>
+    <script>
+        $(document).ready(()=>{
+           $(".item").removeClass("active blink");
+           $("#home-link").addClass("active blink");
+            $(".subItem").removeClass("blink-text");
+            $("#home-sidebarText").addClass("blink-text");
+        });
+    </script>
+
+</section>
+</body>
+</html>

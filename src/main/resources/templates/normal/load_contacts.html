@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{normal/baseUser::layout(~{::section})}">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<section class="mt-6">
+    <div class="card shadow-sm  mr-2">
+        <div class="card-body mt-3">
+            <div th:classappend="${message.type}" class="alert py-2" role="alert"
+                 th:if="${message != null}">
+                <p class="text-center mb-2" th:text="${message.message}"></p>
+            </div>
+            <h1 class="text-center" style="font-family: 'Roboto', sans-serif; font-size: 30px;">
+                Load Contact From Gmail
+            </h1>
+
+            <form th:action="@{/user/SaveGmailContacts}" th:object="${contactsDTO}">
+                <div class="table-responsive-md">
+                    <table class="table table-striped table-hover" id="contactsTable">
+                        <thead class="table-dark">
+                        <tr>
+                            <th class="no-sort" scope="col">Select</th>
+                            <th scope="col">#SL</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Second Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Phone</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="c,state:${contacts}">
+                            <td>
+                                <input type="checkbox" name="selectedContacts" th:field="*{selectedContacts}" th:value="${c.phoneNumber}">
+                            </td>
+                            <th scope="row" th:text="${state.index+1}">#</th>
+                            <td>
+                                <img class="contact_image" th:src="@{'/images/contact/'+${c.image}}" alt="No Image Found">
+                                <span th:text="${c.name}"></span>
+                            </td>
+                            <td>
+                                <span th:text="${c.secondName}">--</span>
+                                <span th:if="${c.secondName == null}">--</span>
+                            </td>
+                            <td>
+                                <span th:text="${c.email}">@</span>
+                                <span th:if="${c.email == null}">@</span>
+                            </td>
+                            <td>
+                                <span th:text="${c.phoneNumber}"></span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin: 20px auto 0; display: flex; gap: 20px; align-items: center; max-width: 900px; justify-content: center;">
+                    <div style="display: flex; flex-direction: row; justify-content: center; align-items: center; height: 100px;">
+                        <button type="submit" class="btn btn-primary btn-lg">Load</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <script>
+        console.log("HELLO DATATABLE")
+        $(document).ready(function (){
+            $('#contactsTable').DataTable();
+        });
+    </script>
+    <script>
+        $(document).ready(()=>{
+            $(".item").removeClass("active blink");
+            $("#sync-link").addClass("active blink");
+            $(".subItem").removeClass("blink-text");
+            $("#sync-sidebarText").addClass("blink-text");
+        });
+    </script>
+</section>
+</body>
+</html>
