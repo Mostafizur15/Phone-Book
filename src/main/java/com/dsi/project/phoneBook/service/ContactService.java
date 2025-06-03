@@ -7,6 +7,8 @@ import com.dsi.project.phoneBook.entities.Contact;
 import com.dsi.project.phoneBook.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,26 +21,44 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ContactService {
     private final UserRepository userRepository;
     private final ContactRepository contactRepository;
+    private final RedisTemplate<String,Object> redisTemplate;
     @Autowired
-    public ContactService(UserRepository userRepository, ContactRepository contactRepository) {
+    public ContactService(UserRepository userRepository, ContactRepository contactRepository, RedisTemplate<String,Object> redisTemplate) {
         this.userRepository = userRepository;
         this.contactRepository = contactRepository;
+        this.redisTemplate = redisTemplate;
     }
     public List<Contact> getContacts(Principal principal) {
         try{
-            return this.contactRepository.getContactByUser(this.userRepository.getUserByEmail(principal.getName()).getId());
+            String redisKey = "contact:"+principal.getName();
+            Object cached = redisTemplate.opsForValue().get(redisKey);
+            if(cached instanceof List && cached!=null) {
+                return (List<Contact>)cached;
+            }
+            List<Contact> listOfContacts;
+            listOfContacts = this.contactRepository.getContactByUser(this.userRepository.getUserByEmail(principal.getName()).getId());
+            redisTemplate.opsForValue().set(redisKey,listOfContacts);
+            return listOfContacts;
         }catch (Exception e){
             throw e;
         }
     }
     public Contact getContactById(Principal principal, Integer cId) {
         try{
-            return this.contactRepository.findById(cId).get();
+            String redisKey = "contact:"+principal.getName()+" "+cId;
+            Object cached = redisTemplate.opsForValue().get(redisKey);
+            if(cached!=null)
+                return (Contact)cached;
+            Contact contact = this.contactRepository.findById(cId).get();
+            redisTemplate.opsForValue().set(redisKey,contact);
+            redisTemplate.delete(redisKey.substring(0,redisKey.indexOf(" ")));
+            return contact;
         } catch (Exception e) {
             throw e;
         }
@@ -75,6 +95,11 @@ public class ContactService {
             }
             managedContact.setUser(user);
             this.contactRepository.save(managedContact);
+            if(contact.getCId() != null){
+                String redisKey = "contact:"+principal.getName()+" "+managedContact.getCId();
+                this.redisTemplate.opsForValue().set(redisKey,managedContact);
+                redisTemplate.delete(redisKey.substring(0,redisKey.indexOf(" ")));
+            }
             return true;
         } catch (DataIntegrityViolationException ex) {
             throw !checkUpdate ? new DuplicateEntryException("Email already exists") : new UpdateContactException("Email already exists!");
@@ -95,6 +120,9 @@ public class ContactService {
                     Files.deleteIfExists(path);
                 }
                 this.contactRepository.deleteById(cId);
+                String redisKey = "contact:"+principal.getName()+" "+cId;
+                this.redisTemplate.delete(redisKey);
+                redisTemplate.delete(redisKey.substring(0,redisKey.indexOf(" ")));
             }
         } catch (IOException ex) {
             throw new FileCanNotBeDeletedException("File Can Not Be Deleted!");

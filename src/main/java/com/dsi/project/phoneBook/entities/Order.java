@@ -2,12 +2,14 @@ package com.dsi.project.phoneBook.entities;
 
 import lombok.*;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Order {
+public class Order implements Serializable {
     private String id;
     private int amount;
     private String currency;
