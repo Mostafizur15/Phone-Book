@@ -37,13 +37,13 @@ public class ContactService {
     public List<Contact> getContacts(Principal principal) {
         try{
             String redisKey = "contact:"+principal.getName();
-            Object cached = redisTemplate.opsForValue().get(redisKey);
+            /*Object cached = redisTemplate.opsForValue().get(redisKey);
             if(cached instanceof List && cached!=null) {
                 return (List<Contact>)cached;
-            }
+            }*/
             List<Contact> listOfContacts;
             listOfContacts = this.contactRepository.getContactByUser(this.userRepository.getUserByEmail(principal.getName()).getId());
-            redisTemplate.opsForValue().set(redisKey,listOfContacts);
+            /*redisTemplate.opsForValue().set(redisKey,listOfContacts);*/
             return listOfContacts;
         }catch (Exception e){
             throw e;
